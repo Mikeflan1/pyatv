@@ -155,14 +155,21 @@ class SRPAuthHandler:
     def step2(self, atv_pub_key, atv_salt):
         """Second pairing step."""
         pk_str = binascii.hexlify(atv_pub_key).decode()
-        salt = binascii.hexlify(atv_salt).decode()
-        self._client_session_key, _, _ = self._session.process(pk_str, salt)
+        print("B is: ", pk_str)
 
+        salt = binascii.hexlify(atv_salt).decode()
+        print("Salt is: ", salt)
+
+        self._client_session_key, _, _ = self._session.process(pk_str, salt)
         if not self._session.verify_proof(self._session.key_proof_hash):
             raise exceptions.AuthenticationError('proofs do not match (mitm?)')
 
         pub_key = binascii.unhexlify(self._session.public)
+        print("A is: ", pub_key)
+
         proof = binascii.unhexlify(self._session.key_proof)
+        print("Proof is: ", proof)
+
         log_binary(_LOGGER, 'Client', Public=pub_key, Proof=proof)
         return pub_key, proof
 
